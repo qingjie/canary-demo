@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: canary-ingress
+  namespace: prod-canary
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-weight: "30"
+spec:
+  tls:
+  - hosts:
+    - qzhao.weplay.link
+    secretName: letsencrypt-prod
+  rules:
+  - host: qzhao.weplay.link
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: canary
+            port:
+              number: 80
+
